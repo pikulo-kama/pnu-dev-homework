@@ -5,13 +5,14 @@ import com.sun.xml.internal.ws.util.StringUtils;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class StreamUtils {
+public final class StreamUtils {
 
-    public static Function<Map<String, Stream<String>>, Stream<String>> distincter;
-    public static Function<List<Stream<String>>, Map<String, Stream<String>>> phoneNumberAnalyzer;
-
+    public static Function<Map<String, Stream<String>>, Stream<String>> nameList;
+    public static Function<List<Stream<String>>, Map<String, Stream<String>>> phoneNumbers;
+    public static Function<Stream<IntStream>, Integer> sumEven;
 
     private static class NumberGroupResolver {
 
@@ -25,17 +26,17 @@ public class StreamUtils {
             return "err";
         }
 
-        public static Stream<String> resolveValue(String number) {
+        public static String resolveValue(String number) {
             if (number.length() == 10)
-                return Stream.of(number.substring(3));
+                return number.substring(3);
 
-            return Stream.of(number);
+            return number;
         }
 
     }
 
     static {
-        distincter = dataset -> dataset
+        nameList = dataset -> dataset
                 .values()
                 .stream()
                 .flatMap(Function.identity())
@@ -44,13 +45,28 @@ public class StreamUtils {
                 .map(StringUtils::capitalize)
                 .distinct();
 
-        phoneNumberAnalyzer = dataset -> dataset.stream()
+//        phoneNumbers = dataset -> dataset.stream()
+//                .flatMap(Function.identity())
+//                .map(number -> number.replaceAll("[-\\s()]+", ""))
+//                .collect(Collectors.toMap(
+//                        NumberGroupResolver::resolveKey,
+//                        NumberGroupResolver::resolveValue,
+//                        (first, second) -> second
+//                ));
+
+        phoneNumbers = dataset -> dataset.stream()
+                .filter(Objects::nonNull)
                 .flatMap(Function.identity())
                 .map(number -> number.replaceAll("[-\\s()]+", ""))
-                .collect(Collectors.toMap(
+                .sorted()
+                .collect(Collectors.groupingBy(
                         NumberGroupResolver::resolveKey,
-                        NumberGroupResolver::resolveValue,
-                        (first, second) -> first
-                ));
+                        Collectors.mapping(
+                                NumberGroupResolver::resolveValue,
+                                Collectors.toList()
+                        )
+                )).entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, number -> number.getValue().stream()));
     }
 }
