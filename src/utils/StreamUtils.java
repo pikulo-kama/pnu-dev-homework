@@ -59,5 +59,13 @@ public final class StreamUtils {
                 )).entrySet()
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, number -> number.getValue().stream()));
+
+        sumEven = dataset -> dataset
+                .filter(Objects::nonNull)
+                .mapToInt(stream -> stream
+                        .filter(number -> number % 2 == 0)
+                        .max().orElse(0)
+                )
+                .sum();
     }
 }
