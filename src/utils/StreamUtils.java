@@ -72,7 +72,7 @@ public final class StreamUtils {
         sumEven = dataset -> dataset
                 .filter(Objects::nonNull)
                 .mapToInt(stream -> stream
-                        .filter(number -> number % 2 == 0)
+                        .filter(number -> number % 2 == 0 && number > 0)
                         .max()
                         .orElse(0)
                 )
