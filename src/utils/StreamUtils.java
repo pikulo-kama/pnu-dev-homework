@@ -2,7 +2,9 @@ package utils;
 
 import com.sun.xml.internal.ws.util.StringUtils;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -15,6 +17,7 @@ public final class StreamUtils {
     public static Function<List<Stream<String>>, Map<String, Stream<String>>> phoneNumbers;
     public static Function<Stream<IntStream>, Integer> sumEven;
     public static BiFunction<IntStream, Stream<String>, Long> countNumbers;
+    public static Function<Stream<Integer>, Stream<Integer>> duplicateElements;
 
     private static class NumberGroupResolver {
 
@@ -85,6 +88,14 @@ public final class StreamUtils {
 
                                 (number.contains("3") || Integer.parseInt(number) % 3 == 0))
                 .count();
+
+        duplicateElements = dataset -> dataset
+                .collect(Collectors.groupingBy(number -> number))
+                .entrySet()
+                .stream()
+                .filter(pair -> pair.getValue().size() > 1)
+                .map(Map.Entry::getKey)
+                .sorted();
 
     }
 }
