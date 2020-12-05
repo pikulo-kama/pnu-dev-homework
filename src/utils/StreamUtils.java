@@ -3,6 +3,7 @@ package utils;
 import com.sun.xml.internal.ws.util.StringUtils;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -13,6 +14,7 @@ public final class StreamUtils {
     public static Function<Map<String, Stream<String>>, Stream<String>> nameList;
     public static Function<List<Stream<String>>, Map<String, Stream<String>>> phoneNumbers;
     public static Function<Stream<IntStream>, Integer> sumEven;
+    public static BiFunction<IntStream, Stream<String>, Long> countNumbers;
 
     private static class NumberGroupResolver {
 
@@ -58,6 +60,30 @@ public final class StreamUtils {
                         )
                 )).entrySet()
                 .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, number -> number.getValue().stream()));
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        number -> number.getValue().stream()
+                ));
+
+        sumEven = dataset -> dataset
+                .filter(Objects::nonNull)
+                .mapToInt(stream -> stream
+                        .filter(number -> number % 2 == 0)
+                        .max()
+                        .orElse(0)
+                )
+                .sum();
+
+        countNumbers = (intStream, stringStream) ->
+                Stream.concat(
+                        intStream.mapToObj(String::valueOf),
+                        stringStream
+
+                ).filter(
+                        number -> !number.matches("0") && number.matches("\\d+") &&
+
+                                (number.contains("3") || Integer.parseInt(number) % 3 == 0))
+                .count();
+
     }
 }
