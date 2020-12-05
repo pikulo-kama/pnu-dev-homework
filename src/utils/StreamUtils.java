@@ -65,6 +65,7 @@ public final class StreamUtils {
                         number -> number.getValue().stream()
                 ));
 
+
         sumEven = dataset -> dataset
                 .filter(Objects::nonNull)
                 .mapToInt(stream -> stream
