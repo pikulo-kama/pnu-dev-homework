@@ -45,12 +45,14 @@ public final class StreamUtils {
                 .values()
                 .stream()
                 .flatMap(Function.identity())
+                .filter(Objects::nonNull)
                 .map(string -> string.replaceAll("\\s+", ""))
                 .map(String::toLowerCase)
                 .map(StringUtils::capitalize)
                 .distinct();
 
-        phoneNumbers = dataset -> dataset.stream()
+        phoneNumbers = dataset -> dataset
+                .stream()
                 .filter(Objects::nonNull)
                 .flatMap(Function.identity())
                 .map(number -> number.replaceAll("[-\\s()]+", ""))
@@ -70,10 +72,9 @@ public final class StreamUtils {
 
 
         sumEven = dataset -> dataset
-                .filter(Objects::nonNull)
                 .mapToInt(stream -> stream
                         .filter(number -> number % 2 == 0 && number > 0)
-                        .max()
+                        .min()
                         .orElse(0)
                 )
                 .sum();
