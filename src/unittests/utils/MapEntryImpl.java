@@ -1,4 +1,4 @@
-package tests.utils;
+package unittests.utils;
 
 import java.util.Map;
 
