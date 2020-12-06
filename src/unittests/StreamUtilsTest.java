@@ -1,8 +1,8 @@
-package tests;
+package unittests;
 
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import tests.utils.MapEntryImpl;
+import unittests.utils.MapEntryImpl;
 import utils.StreamUtils;
 
 import java.util.ArrayList;
